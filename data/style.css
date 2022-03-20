@@ -1,0 +1,125 @@
+  html {
+    font-family: Arial, Helvetica, sans-serif;
+    text-align: center;
+  }
+  
+  #clock {
+    font-family: Arial, Helvetica, sans-serif;
+    text-align: left;
+	margin: 0;
+  }
+  h1 {
+    font-size: 1.8rem;
+    color: white;
+  }
+  h2{
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #143642;
+  }
+  .topnav {
+    overflow: hidden;
+    background-color: #143642;
+  }
+  body {
+  margin: 0;
+  --background: #00796B;
+}
+.container {
+  font-size: 1.4rem;
+  --color: white;
+  height: 20px;
+  width: 20px;
+  padding-left:40px;  
+}
+
+input[type='radio']{
+	transform: scale(1.6);
+	
+}
+
+  .content {
+    padding: 30px;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+  .card {
+    background-color: #F8F7F9;
+    box-shadow: 2px 2px 12px 1px rgba(140,140,140,.5);
+    padding-top:10px;
+    padding-bottom:20px;
+  }
+  
+    .menut {
+    background-color: #f1f1f1;
+	position: fixed;
+    bottom: 0;
+    width: 100%;
+	border:0.2rem solid black;
+  }
+  
+.menut1 {
+	width: 49.2%;
+    text-align: center;
+	color:#143642;
+  }
+.menut1:hover {background-color: #f0f0f0}
+     .menut1:active {
+     background-color: #143642;
+	 color:#f1f1f1;
+     box-shadow: 2 2px #CDCDCD;
+     transform: translateY(2px); 
+   }
+  
+  .button {
+	--background-color: #0f8b8d;
+	background-color: #143642;
+	float:right;
+	margin-right:1rem;
+    padding: 15px 50px;
+    font-size: 24px;
+    text-align: center;
+    outline: none;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+   }
+   .button:hover {background-color: #0f8b8d}
+   .button:active {
+     background-color: #80D8FF;
+     box-shadow: 2 2px #CDCDCD;
+     transform: translateY(2px);
+   }
+   
+    .button2 {
+		font-size: 1.5rem;
+    font-weight: bold;
+    color: #143642;
+	
+	margin: 2%;
+	 padding: 50px 50px;
+	 --font-size: 24px;
+   --  background-color: #2f8bad;
+     box-shadow: 2 2px #CDCDCD;
+     transform: translateY(2px);
+   }
+   
+.button3 {
+	margin: 1%;
+	padding: 53px 33px;
+	font-size: 26px;
+    background-color: #FFEA00;
+	border-radius: 50%;
+	border-style: none;
+   }
+ .button3:hover {background-color: #FFCB00}
+   .button3:active {
+     box-shadow: 2 2px #CDCDCD;
+     transform: translateY(2px);
+	 border:0.1rem solid black;
+   }  
+   .state {
+     font-size: 1.5rem;
+     color:#8c8c8c;
+     font-weight: bold;
+   }

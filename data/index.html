@@ -1,0 +1,72 @@
+<!DOCTYPE HTML><html>
+<head>
+  <title>HVAC Server</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+
+<body>
+	<div class="topnav">
+		<h1>HVAC Server</h1>
+	</div>
+
+	<div>
+		<button   id="button_manu" class="button">Manual</button>
+		<h2 style="text-align: left; padding-left:1rem; margin-bottom: 0; margin-top: 30px;
+		 font-size: 1.8rem;" id = "clock" onload="currentTime()"></h2>
+		<h3 style="text-align: left; padding-left:1rem; font-size: 2.8rem; margin-top: 0">Home</h3>
+	</div>
+
+	<div id="homee">
+		<div style="padding-bottom:30px;">
+			<label style="color:#333333; font-size: 1.2rem;">Fan:</label>
+			<label class="container">Auto
+			  <input id="auto" type="radio" checked="checked" name="radio1">
+			  <span class="checkmark"></span>
+			</label>
+			<label class="container">On
+			  <input id="on" type="radio" name="radio1">
+			  <span class="checkmark"></span>
+			</label>
+		</div>
+
+		<div>
+			<label style="color:#333333; font-size: 1.2rem;">Mode:</label>
+			<label class="container">Off
+			  <input id="off" type="radio" checked="checked" name="radio">
+			  <span class="checkmark"></span>
+			</label>
+			<label class="container">Heat
+			  <input id="heat" type="radio" name="radio">
+			  <span class="checkmark"></span>
+			</label>
+			<label class="container">Cool
+			  <input id="cool" type="radio" name="radio">
+			  <span class="checkmark"></span>
+			</label>
+		</div>
+	</div>
+	
+	<div id="zones"><h2>
+		<div id="ezones">
+			<!--
+			<a href="./myzone.html"><button  id="z1" class="button2"><h2>Zone 1</h2></button></a>
+			<a href="./myzone.html"><button  id="z2" class="button2"><h2>Zone 2</h2></button></a>
+			!-->
+		</div>
+		<div>
+			<a href="./addzone.html"><button  class="button3">+ New</button></a>
+		</div>		
+	</h2></div>
+
+	<div style="padding: 4rem;">
+	</div>
+	<div class="menut">
+		<button onclick="showHome()" class="menut1"><h2>Main</h2></button>
+		<button onclick="showZone()" class="menut1"><h2>Zones</h2></button>
+	</div>
+
+<script type="text/javascript" src="sct_home.js"></script>
+</body>
+</html>

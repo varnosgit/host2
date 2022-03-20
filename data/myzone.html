@@ -1,0 +1,144 @@
+<!DOCTYPE HTML><html>
+<head>
+  <title>HVAC Server</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" type="text/css" href="style.css">
+
+</head>
+<body>
+  <div class="topnav">
+    <h1>My Zone</h1>
+  </div>
+
+<div style="text-align: left; padding-left:50px; margin-bottom: 0; margin-top: 30px; font-size: 1.8rem;" id = "clock" onload="currentTime()"></div>
+
+<h3 id="ZN"; style="text-align: left; padding-left:50px; font-size: 2.8rem; margin-top: 0">Zone Name?</h3>
+
+<div id="edevs">
+	<!--
+	<a href="./vent.html"><button style="padding:30px; margin:30px;"><h2>Device 1 - Vent</h2></button></a>
+	<a href="./termo.html"><button style="padding:30px; margin:30px;"><h2>Device 2 - Termostat</h2></button></a>
+	!-->
+</div>	
+
+<div>
+	<a href="./index.html?name=zone">
+	<button id="delZ" style="padding:30px; margin:30px;"><h2>Delete Zone</h2></button>
+	</a>
+	<button id="add_dev" style="padding:30px; margin:30px;"><h2>Add Device</h2></button>
+	<p id="add_mesg"></p>
+	<img id="loadgif" src="loading.gif" alt="loading ..." style="width:48px;height:48px;">
+</div>	
+
+
+<script>
+ 	mydata = parseURLParams(window.location.href);
+	document.getElementById('ZN').innerHTML = mydata['name'];
+	document.getElementById("loadgif").style.visibility = "hidden";
+	
+	
+	var gateway = `ws://${window.location.hostname}/ws`;
+	var websocket;
+	window.addEventListener('load', onLoad);
+
+function onLoad(event) {
+    initWebSocket();
+  }
+function initWebSocket() {
+    console.log('Trying to open a WebSocket connection...');
+    websocket = new WebSocket(gateway);
+    websocket.onopen    = onOpen;
+    websocket.onclose   = onClose;
+    websocket.onmessage = onMessage; // <-- add this line
+  }
+function onOpen(event) {
+    console.log('Connection opened');
+	websocket.send("Zone Device Names," + document.getElementById('ZN').innerHTML);
+
+  }
+function onClose(event) {
+    console.log('Connection closed');
+    setTimeout(initWebSocket, 2000);
+  }
+function onMessage(event) {
+	const myArray = event.data.split(",");
+	if (myArray[0] == "Add Device")
+	{
+		document.getElementById('add_mesg').innerHTML = "";
+		document.getElementById("loadgif").style.visibility = "hidden";
+		
+		var myDiv = document.getElementById("edevs");
+		let btn = document.createElement("button");
+		myDiv.appendChild(btn);
+		btn.innerHTML = myArray[1];
+		btn.classList.add('button2');
+		btn.onclick = function () 
+		{
+			window.location = "./device.html" + "?zonename=" +
+										document.getElementById('ZN').innerHTML
+										+ "&devname=" + myArray[1]; 
+		};
+	}
+	if (myArray[0] == "Device Names")
+	{
+		myArray.forEach(add_device_bottom);
+	}
+  }
+  
+ 
+  document.getElementById('delZ').addEventListener('click', deleteZone_command);
+  document.getElementById('add_dev').addEventListener('click', addDev_command);
+  
+function add_device_bottom(item, index){
+		if (index < 1) return;
+	    var myDiv = document.getElementById("edevs");
+		let btn = document.createElement("button");
+		myDiv.appendChild(btn);
+		btn.innerHTML = item;
+		btn.classList.add('button2');
+		btn.onclick = function () 
+		{
+			window.location = "./device.html" + "?zonename=" +
+										document.getElementById('ZN').innerHTML
+										+ "&devname=" + item; 
+		};
+  }
+  
+function deleteZone_command(){
+console.log('deleteeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee');
+	  var xname = document.getElementById("ZN").innerHTML;
+	   websocket.send("Delete Zone," + xname);
+  }
+function addDev_command(){
+	  document.getElementById('add_mesg').innerHTML = "please 3 sec.";
+	  document.getElementById("loadgif").style.visibility = "visible";
+	   websocket.send("Search Device," + document.getElementById('ZN').innerHTML);
+  }	
+function parseURLParams(url) {
+    var queryStart = url.indexOf("?") + 1,
+        queryEnd   = url.indexOf("#") + 1 || url.length + 1,
+        query = url.slice(queryStart, queryEnd - 1),
+        pairs = query.replace(/\+/g, " ").split("&"),
+        parms = {}, i, n, v, nv;
+
+    if (query === url || query === "") return;
+
+    for (i = 0; i < pairs.length; i++) {
+        nv = pairs[i].split("=", 2);
+        n = decodeURIComponent(nv[0]);
+        v = decodeURIComponent(nv[1]);
+
+        if (!parms.hasOwnProperty(n)) parms[n] = [];
+        parms[n].push(nv.length === 2 ? v : null);
+    }
+    return parms;
+}
+
+
+	
+</script>
+
+<!--<script type="text/javascript" src="script.js"></script> </!-->
+</body>
+</html>

@@ -1,0 +1,71 @@
+<!DOCTYPE HTML><html>
+<head>
+  <title>HVAC Server</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" type="text/css" href="style.css">
+
+</head>
+<body>
+  <div class="topnav">
+    <h1>Create New Zone</h1>
+  </div>
+
+<div style="text-align: left; padding-left:50px; margin-bottom: 0; margin-top: 30px; font-size: 1.8rem;" id = "clock" onload="currentTime()"></div>
+
+<h3 style="text-align: left; padding-left:50px; font-size: 2.8rem; margin-top: 0">Home </h3>
+	
+		
+	<label style="padding:30px; font-size:1.5rem;">Zone Icon:</label>
+	<input style="padding:5px; font-size:1.5rem;" type="text" id="flogo" name="fname"><br><br>
+	<label style="padding:30px; font-size:1.5rem;">Zone Name:</label>
+	<input style="padding:5px; font-size:1.5rem;" type="text" id="fname" name="fname"><br><br>
+	<a href="./index.html?name=zone"><button style="padding:30px; margin:30px;"><h2>Back</h2></button></a>
+	<a href="./index.html?name=zone"><button id="addZ" style="padding:30px; margin:30px;"><h2>Create Zone</h2></button></a>
+
+<script>
+  var gateway = `ws://${window.location.hostname}/ws`;
+  var websocket;
+  window.addEventListener('load', onLoad);
+  
+
+function onLoad(event) {
+    initWebSocket();
+    initButton();
+  }
+
+  function initWebSocket() {
+    console.log('Trying to open a WebSocket connection...');
+    websocket = new WebSocket(gateway);
+    websocket.onopen    = onOpen;
+    websocket.onclose   = onClose;
+    websocket.onmessage = onMessage; // <-- add this line
+  }
+  function onOpen(event) {
+    console.log('Connection opened');
+
+  }
+  function onClose(event) {
+    console.log('Connection closed');
+    setTimeout(initWebSocket, 2000);
+  }
+  function onMessage(event) {
+	    //let text = event.data;
+	    const myArray = event.data.split(",");
+		if (myArray[0] == "Zone Names")
+			myArray.forEach(addZones);
+  }
+  
+
+  function initButton() {
+	document.getElementById('addZ').addEventListener('click', addZone_command);
+  }
+  function addZone_command(){
+	  var xname = document.getElementById("fname").value;
+	  var xlogo = document.getElementById("flogo").value;
+	   websocket.send("Add New Zone," + xname + "," + xlogo);
+  }
+
+</script>
+</body>
+</html>
