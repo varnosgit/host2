@@ -15,26 +15,27 @@ uint8_t controller_MAC[6] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
 // this 3 below functions must run on the second core
 void send_data_to_controller(void)
 {
-    // uint8_t data_ack[2] = {'N', 'O'};
+    Serial.println("Sending data to controller: ");
     hc_mesg.begin_validator[0] = 'V';
     hc_mesg.begin_validator[1] = 'A';
     hc_mesg.begin_validator[2] = 'C';
     hc_mesg.end_validator = 'H';
     Serial2.write((const uint8_t *)&hc_mesg, sizeof(hc_mesg));  
-    Serial.print("send data to controller");
-
-    // delay(100);
-    // Serial2.read(data_ack, sizeof(data_ack));
-    // if (data_ack[0]=='O' and data_ack[1]=='K') Serial.println(" Delivery Success");
-    // else Serial.println(" Delivery Fail!");
-
+    // if (hc_mesg.__hcdata > 2) // send data to a device or pair
+    // {
+    //     uint8_t data_ack[2] = {'N', 'O'};
+    //     delay(100);
+    //     Serial2.read(data_ack, sizeof(data_ack));
+    //     if (data_ack[0]=='O' and data_ack[1]=='K') Serial.println("Host to device Delivery Success");
+    //     else Serial.println("Host to device Delivery Fail!");
+    // }
     hc_sendFlag = 0;
 }
 
 bool receive_data_from_controller(void)
 {
-    // if (Serial2.available() > 10) 
-    if (Serial2.available()) 
+    if (Serial2.available() > 10) // not delivery status 
+    //if (Serial2.available()) 
     {
       delay(10);  
       char* rxdata = (char*) &hc_mesg;
@@ -46,28 +47,29 @@ bool receive_data_from_controller(void)
 
 void print_hcMessage(hc_message DD)
 {
-    Serial.printf("reciever MAC: %02X:%02X:%02X:%02X:%02X:%02X\n",
+    Serial.printf("   reciever MAC: %02X:%02X:%02X:%02X:%02X:%02X\n",
     DD.reciever_MAC_addr[0], DD.reciever_MAC_addr[1], DD.reciever_MAC_addr[2], 
     DD.reciever_MAC_addr[3], DD.reciever_MAC_addr[4], DD.reciever_MAC_addr[5]); 
-    Serial.printf("sender MAC: %02X:%02X:%02X:%02X:%02X:%02X\n",
+    Serial.printf("   sender MAC: %02X:%02X:%02X:%02X:%02X:%02X\n",
     DD.sender_MAC_addr[0], DD.sender_MAC_addr[1], DD.sender_MAC_addr[2], 
     DD.sender_MAC_addr[3], DD.sender_MAC_addr[4], DD.sender_MAC_addr[5]);
 
-    Serial.print(" * __hcdata: ");      Serial.println(DD.__hcdata);
-    Serial.print(" * _sender: ");       Serial.println(DD._sender);
-    Serial.print(" * _command: ");      Serial.println(DD._command);
-    Serial.print(" * temprature: ");    Serial.println(DD.temprature);
-    Serial.print(" * batStat: ");       Serial.println(DD.batStat);
-    Serial.print(" * fanStatus: ");     Serial.println(DD.fanStatus);
-    Serial.print(" * setPoint_temp: "); Serial.println(DD.setPoint_temp);
-    Serial.print(" * ventStatus: ");    Serial.println(DD.ventStatus);
+    Serial.print("    * __hcdata: ");      Serial.println(DD.__hcdata);
+    Serial.print("    * _sender: ");       Serial.println(DD._sender);
+    Serial.print("    * _command: ");      Serial.println(DD._command);
+    Serial.print("    * temprature: ");    Serial.println(DD.temprature);
+    Serial.print("    * batStat: ");       Serial.println(DD.batStat);
+    Serial.print("    * fanStatus: ");     Serial.println(DD.fanStatus);
+    Serial.print("    * setPoint_temp: "); Serial.println(DD.setPoint_temp);
+    Serial.print("    * ventStatus: ");    Serial.println(DD.ventStatus);
 }
 void handle_controller_message(void) 
 {
     hc_recvFlag = 0;
-    if (hc_mesg.begin_validator[0] == 'V' & hc_mesg.begin_validator[1] == 'A' & hc_mesg.begin_validator[2] == 'C' &
-        hc_mesg.end_validator == 'H')
+    if ((hc_mesg.begin_validator[0] == 'V') & (hc_mesg.begin_validator[1] == 'A') & (hc_mesg.begin_validator[2] == 'C') &
+        (hc_mesg.end_validator == 'H'))
     {
+        Serial.println("data recieved from controller:");
         print_hcMessage(hc_mesg);
         if (hc_mesg.__hcdata == 0x01) // 1 = introduce controller
         {
@@ -90,13 +92,13 @@ void handle_controller_message(void)
                 {
                     pair_request_flag = 0;
                     //////////////////////////////////////////////// save new device on flash & database
-                    uint8_t dev_type = 0; 
                     String dev_name;
                     dev_name = add_device_to_zone(globalZoneID, hc_mesg._sender , hc_mesg.sender_MAC_addr);
                     if (dev_name != "no name")
                     {
                         ////////////////////////////////////////////// notify controller and device
                         hc_mesg.__hcdata = 4; // 4 = host: pair a device with sender MAC Add
+                        Serial.println("Device added successfully, command controller to pair device and acknowlodge it.");
                         hc_sendFlag = 1;
                         /////////////////////////////////////// notify browser
                         // char buf[100]; 
@@ -126,6 +128,14 @@ void handle_controller_message(void)
                 notifyClients_txt(devices_stat);
 
             }
+        }
+        else if (hc_mesg.__hcdata == 0x06) // 6 = cont.: delivery to device failed (dev mac = reciver mac address)
+        {
+           // zones[globalZoneID].termos[globalDeviceID].setPoint = hc_mesg.setPoint_temp; 
+            String devices_stat = "Device Status, not Available";
+            //devices_stat = "Device Status," + String(hc_mesg.setPoint_temp);
+            Serial.println(devices_stat);
+            notifyClients_txt(devices_stat);
         }
     }
     else
@@ -213,9 +223,9 @@ void handle_browser_message(char *data, size_t len)
             hc_mesg.reciever_MAC_addr[i] = zones[globalZoneID].termos[globalDeviceID].MAC_addr[i];
             hc_mesg.sender_MAC_addr[i] = controller_MAC[i];
         }
-        hc_sendFlag = 1;
-        Serial.println("send data for unpair a device");
+        Serial.println("send data for unpair a device:");
         print_hcMessage(hc_mesg);
+        hc_sendFlag = 1;
     }
     if (strs[0] == "Change Setpoint")
     {   
@@ -229,9 +239,9 @@ void handle_browser_message(char *data, size_t len)
             hc_mesg.reciever_MAC_addr[i] = zones[globalZoneID].termos[globalDeviceID].MAC_addr[i];
             hc_mesg.sender_MAC_addr[i] = controller_MAC[i];
         }
-        hc_sendFlag = 1;
         Serial.println("send data to change setpoint");
         print_hcMessage(hc_mesg);
+        hc_sendFlag = 1;
     }
     // hc_mesg.command = 0x03;
     // if (strcmp((char*)data, "auto") == 0) 
