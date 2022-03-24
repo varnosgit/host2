@@ -5,8 +5,8 @@
 
 //const char* ssid = "HUAWEI-2.4G-g4ci"; const char* password = "db7nf4dk";
 //const char* ssid = "artin123"; const char* password = "Smartartin123";
-const char* ssid = "Varnos5"; const char* password = "toolesag";
-// const char* ssid = "Hanisa"; const char* password = "1qaz!QAZ";
+// const char* ssid = "Varnos5"; const char* password = "toolesag";
+const char* ssid = "Hanisa"; const char* password = "1qaz!QAZ";
 String hostname = "HVAC Server";
 
 IPAddress localIp;
@@ -107,7 +107,7 @@ void onEvent(AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEventType 
       Serial.printf("WebSocket client #%u disconnected\n", client->id());
       break;
     case WS_EVT_DATA:
-      handleWebSocketMessage(arg, data, len);
+      handleWebSocketMessage(arg, data, len, client->id());
       break;
     case WS_EVT_PONG:
     case WS_EVT_ERROR:
@@ -115,12 +115,12 @@ void onEvent(AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEventType 
   }
 }
 
-void handleWebSocketMessage(void *arg, uint8_t *data, size_t len) {
+void handleWebSocketMessage(void *arg, uint8_t *data, size_t len, uint32_t client_id) {
   AwsFrameInfo *info = (AwsFrameInfo*)arg;
   if (info->final && info->index == 0 && info->len == len && info->opcode == WS_TEXT) {
     data[len] = 0;
 
-    handle_browser_message((char *)data, len);
+    handle_browser_message((char *)data, len, client_id);
 
     if (strcmp((char*)data, "toggle") == 0) {
       ledState = !ledState;
@@ -157,5 +157,9 @@ void notifyClients(int dd) {
 
 void notifyClients_txt(String txt) {
   ws.textAll(txt);
+}
+
+void notify_a_client_txt(String txt, uint32_t myID) {
+  ws.text(myID, txt);
 }
 

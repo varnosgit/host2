@@ -20,7 +20,7 @@
 	</div>
 	<div>
 		<span style="padding:30px; font-size:1.5rem;">Temperature:</span>
-		<span id="tempo_val"> 27</span>
+		<span id="tempo_val">27</span>
 	</div>
 	<div style="padding:30px;">
 		<span style="padding:30px; font-size:1.5rem;">Battery Level:</span>
@@ -68,11 +68,11 @@ function onClose(event) {
   }
 function onMessage(event) {
 	const myArray = event.data.split(",");
-	if (myArray[0] == "Device Status")
+	if (myArray[0]=="Device Status" && myArray[1]==myURL_param['zonename'] && myArray[2]==myURL_param['devname'])
 	{
-	console.log('sssssssssss');
-		document.getElementById('tempo_val').innerHTML = myArray[1];
-		document.getElementById('setp_val').value = myArray[1];
+		document.getElementById('bat_val').innerHTML = myArray[3];
+		document.getElementById('setp_val').value = myArray[4];
+		document.getElementById('tempo_val').innerHTML = myArray[5];
 	}
   }
   

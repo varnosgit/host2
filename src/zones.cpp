@@ -55,6 +55,35 @@ void zone_reload(void)
     }
 }
 
+
+bool redundant_macAdd_check(uint8_t * mac_addr)
+{
+    uint8_t n = 0;
+    for (int i=0; i<numOfMaxZones; i++)
+    {
+        for (int j=0; j<10; j++)
+        {
+            n = 0;
+            for (int k=0; k<6; k++)
+            {   
+                if (zones[i].termos[j].isActive == 1)
+                if (zones[i].termos[j].MAC_addr[k] == mac_addr[k]) n++;
+            }
+            if (n == 6) return true;
+
+            n = 0;
+            for (int k=0; k<6; k++)
+            {   
+                if (zones[i].vents[j].isActive == 1)
+                if (zones[i].vents[j].MAC_addr[k] == mac_addr[k]) n++;
+            }
+            if (n == 6) return true;
+        }
+    }
+    return false;
+}
+
+
 String get_zone_names(void)
 {
     String __zone_name_commands = "Zone Names";
@@ -129,11 +158,11 @@ uint8_t get_zoneID_by_name(String zone_name)
     {
         if (String(zones[i].name) == zone_name) //same name
         {
-            Serial.print("zone id from name: "); Serial.println(i);
+            // Serial.print("zone id from name: "); Serial.println(i);
             return i;
         }
     }
-    Serial.print("zone id from name: "); Serial.println(255);
+    // Serial.print("zone id from name: "); Serial.println(255);
     return 255;
 }
 uint8_t get_DeviceID_by_name(int zoneID, String dev_name)
@@ -142,12 +171,12 @@ uint8_t get_DeviceID_by_name(int zoneID, String dev_name)
     {
         if (String(zones[zoneID].termos[i].name) == dev_name) //same name
         {
-            Serial.print("Device termostat id from name in zone: "); Serial.println(i);
+            // Serial.print("Device termostat id from name in zone: "); Serial.println(i);
             return i;
         }
         if (String(zones[zoneID].vents[i].name) == dev_name) //same name
         {
-            Serial.print("Device vent id from name in zone: "); Serial.println(i);
+            // Serial.print("Device vent id from name in zone: "); Serial.println(i);
             return i;
         }
     }

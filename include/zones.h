@@ -30,6 +30,7 @@ typedef struct systemZone { //16 character
 
 void zone_reload(void);
 String get_zone_names(void);
+bool redundant_macAdd_check(uint8_t * mac_addr);
 uint8_t add_new_zone(String name, String icon);
 uint8_t delete_zone(String name);
 uint8_t get_zoneID_by_name(String zone_name);
