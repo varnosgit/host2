@@ -57,10 +57,9 @@ void setup_webpages(void)
     request->send(SPIFFS, "/style.css", "text/css");
   });
     // Route to load script.js file
-  server.on("/sct_home.js", HTTP_GET, [](AsyncWebServerRequest *request){
-    request->send(SPIFFS, "/sct_home.js", "text/javascript");
+  server.on("/script.js", HTTP_GET, [](AsyncWebServerRequest *request){
+    request->send(SPIFFS, "/script.js", "text/javascript");
   });
-
       // Route for root / web page
   server.on("/addzone.html", HTTP_GET, [](AsyncWebServerRequest *request){
     request->send(SPIFFS, "/addzone.html", String(), false, processor);
@@ -100,7 +99,6 @@ void onEvent(AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEventType 
   switch (type) {
     case WS_EVT_CONNECT:
       Serial.printf("WebSocket client #%u connected from %s\n", client->id(), client->remoteIP().toString().c_str());
-      ws.text(client->id(), get_zone_names());
       break;
     case WS_EVT_DISCONNECT:
       pair_request_flag = 0;
@@ -125,34 +123,8 @@ void handleWebSocketMessage(void *arg, uint8_t *data, size_t len, uint32_t clien
     if (strcmp((char*)data, "toggle") == 0) {
       ledState = !ledState;
       Serial.println((char*)data);
-      //tft.fillRect(0, 0, 150, 50, ledState ? TFT_GREEN : TFT_BLACK);
-      //notifyClients(0);
     }
-
-    if (strcmp((char*)data, "toggle") == 0) {
-      ledState = !ledState;
-      Serial.println((char*)data);
-      //tft.fillRect(0, 0, 150, 50, ledState ? TFT_GREEN : TFT_BLACK);
-      //notifyClients(0);
-    }
-    if (strcmp((char*)data, "newp") == 0) {
-      ledState = !ledState;
-      //tft.fillRect(0, 0, 150, 50, ledState ? TFT_RED : TFT_BLACK);
-      notifyClients(1);
-    }
-    //else
-      // Serial.println((char*)data);
-      //ws.textAll((char*)data);
-     // ws.textAll("salam, khodafez");
   }
-}
-
-void notifyClients(int dd) {
-  if (dd)
-  ws.textAll(String(ledState));
-  else
-  ws.textAll("2");
-  Serial.println("ssssssaaaaaaaaaagg");
 }
 
 void notifyClients_txt(String txt) {

@@ -103,7 +103,8 @@ void handle_controller_message(void)
                             Serial.println("Device added successfully, command controller to pair device and acknowlodge it.");
                             hc_sendFlag = 1;
                             // notify browsers
-                            String newDev = "Add Device," + dev_name; Serial.println(newDev);
+                            String newDev = "Add Device," + String(zones[globalZoneID].name) + "," + dev_name; 
+                            Serial.println(newDev);
                             notifyClients_txt(newDev);
                         }    
                     }
@@ -184,32 +185,34 @@ void handle_browser_message(char *data, size_t len, uint32_t client_id)
     // print data from web to serial
     for (int i = 0; i < StringCount; i++) {
         Serial.print(i);  Serial.print(": \"");    Serial.print(strs[i]);    Serial.println("\"");  }
-
+    if (strs[0] == "Get Zone Names")
+    {
+        notify_a_client_txt(get_zone_names(), client_id);
+    }
     if (strs[0] == "Add New Zone")
     {
         Serial.println("adding new zone...");
         add_new_zone(strs[1], strs[2]);
+        notifyClients_txt("Zone Names," + strs[1]);
     }
     if (strs[0] == "Delete Zone")
     {
         Serial.println("deleting a zone...");
         delete_zone(strs[1]);
+        notifyClients_txt("Delete a Zone," + strs[1]);
     }
     if (strs[0] == "Search Device")
     {
         Serial.println("search for paring a new device...");
-        // write to controler ???
-        //hc_sendFlag = 1;
         pair_request_flag = 1;
         globalZoneID = get_zoneID_by_name(strs[1]);
     }
     if (strs[0] == "Zone Device Names")
     {   
         globalZoneID = get_zoneID_by_name(strs[1]);
-        String devices_names;
-        devices_names = get_zoen_device_names(globalZoneID);
+        String devices_names = "Device Names," + String(strs[1]);
+        devices_names += get_zoen_device_names(globalZoneID);
         Serial.println(devices_names);
-        // notifyClients_txt(devices_names);
         notify_a_client_txt(devices_names, client_id);
     }
     if (strs[0] == "Get Device now Status")
@@ -240,6 +243,7 @@ void handle_browser_message(char *data, size_t len, uint32_t client_id)
         Serial.println("send data for unpair a device:");
         print_hcMessage(hc_mesg);
         hc_sendFlag = 1;
+        notifyClients_txt("Delete a Device," + strs[1] + "," + strs[2]);
     }
     if (strs[0] == "Change Setpoint")
     {   
@@ -257,26 +261,4 @@ void handle_browser_message(char *data, size_t len, uint32_t client_id)
         print_hcMessage(hc_mesg);
         hc_sendFlag = 1;
     }
-    // hc_mesg.command = 0x03;
-    // if (strcmp((char*)data, "auto") == 0) 
-    // {
-    //     hc_mesg.data[0] = 1;
-    // }
-    //     if (strcmp((char*)data, "on") == 0) 
-    // {
-    //     hc_mesg.data[0] = 2;
-    // }
-    //     if (strcmp((char*)data, "off") == 0) 
-    // {
-    //     hc_mesg.data[0] = 3;
-    // }
-    //     if (strcmp((char*)data, "heat") == 0) 
-    // {
-    //     hc_mesg.data[0] = 4;
-    // }
-    //     if (strcmp((char*)data, "cool") == 0) 
-    // {
-    //     hc_mesg.data[0] = 5;
-    // }
-    // hc_sendFlag = 1;
 }

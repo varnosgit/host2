@@ -32,40 +32,17 @@
 	<a href="./index.html"><button style="padding:30px; margin:30px;"><h2>Schedule</h2></button></a>
 	</div>
 
-
-
-
-
-
-
-
 <script>
- 	myURL_param = parseURLParams(window.location.href);
-	document.getElementById('ZM').innerHTML = myURL_param['zonename'];
-	document.getElementById('ZN').innerHTML = myURL_param['devname'];
-	
-	var gateway = `ws://${window.location.hostname}/ws`;
-	var websocket;
-	window.addEventListener('load', onLoad);
-
-function onLoad(event) {
-    initWebSocket();
-  }
-function initWebSocket() {
-    console.log('Trying to open a WebSocket connection...');
-    websocket = new WebSocket(gateway);
-    websocket.onopen    = onOpen;
-    websocket.onclose   = onClose;
-    websocket.onmessage = onMessage; // <-- add this line
-  }
 function onOpen(event) {
     console.log('Connection opened');
 	websocket.send("Get Device now Status," + myURL_param['zonename'] + "," + myURL_param['devname']);
-  }
-function onClose(event) {
-    console.log('Connection closed');
-    setTimeout(initWebSocket, 2000);
-  }
+	
+	document.getElementById('ZM').innerHTML = myURL_param['zonename'];
+	document.getElementById('ZN').innerHTML = myURL_param['devname'];
+	
+	document.getElementById('remove_device').addEventListener('click', remove_device);
+	document.getElementById('change_setpoint').addEventListener('click', change_setpoint);
+}
 function onMessage(event) {
 	const myArray = event.data.split(",");
 	if (myArray[0]=="Device Status" && myArray[1]==myURL_param['zonename'] && myArray[2]==myURL_param['devname'])
@@ -74,43 +51,18 @@ function onMessage(event) {
 		document.getElementById('setp_val').value = myArray[4];
 		document.getElementById('tempo_val').innerHTML = myArray[5];
 	}
-  }
-  
- 
-  document.getElementById('remove_device').addEventListener('click', remove_device);
-  document.getElementById('change_setpoint').addEventListener('click', change_setpoint);
-  
+} 
 function change_setpoint(){
 	  var xname = document.getElementById("ZN").innerHTML;
 	   websocket.send("Change Setpoint,"+ myURL_param['zonename'] + "," + myURL_param['devname'] + "," 
 								+ document.getElementById('setp_val').value);
-  }
-  
+} 
 function remove_device(){
 	  var xname = document.getElementById("ZN").innerHTML;
 	   websocket.send("Remove Device,"+ myURL_param['zonename'] + "," + myURL_param['devname']);
 	   window.location = "./myzone.html" + "?name=" + myURL_param['zonename']; 
-  }
-
-function parseURLParams(url) {
-    var queryStart = url.indexOf("?") + 1,
-        queryEnd   = url.indexOf("#") + 1 || url.length + 1,
-        query = url.slice(queryStart, queryEnd - 1),
-        pairs = query.replace(/\+/g, " ").split("&"),
-        parms = {}, i, n, v, nv;
-
-    if (query === url || query === "") return;
-
-    for (i = 0; i < pairs.length; i++) {
-        nv = pairs[i].split("=", 2);
-        n = decodeURIComponent(nv[0]);
-        v = decodeURIComponent(nv[1]);
-
-        if (!parms.hasOwnProperty(n)) parms[n] = [];
-        parms[n].push(nv.length === 2 ? v : null);
-    }
-    return parms;
 }
 </script>
+<script type="text/javascript" src="script.js"></script>
 </body>
 </html>

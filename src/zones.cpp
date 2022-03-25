@@ -228,7 +228,7 @@ String add_device_to_zone(uint8_t zoneID, uint8_t devModel, uint8_t *devMAC)
 
 String get_zoen_device_names(uint8_t zoneID)
 {
-    String names = "Device Names";
+    String names;
     for (int i=0;i<10; i++)
     {
         if (zones[zoneID].termos[i].isActive) {

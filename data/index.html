@@ -67,6 +67,85 @@
 		<button onclick="showZone()" class="menut1"><h2>Zones</h2></button>
 	</div>
 
-<script type="text/javascript" src="sct_home.js"></script>
+<script>
+currentTime();
+
+function currentTime() {
+  let date = new Date(); 
+  let hh = date.getHours();
+  let mm = date.getMinutes();
+  let ss = date.getSeconds();
+  let session = "AM";
+  
+  if(hh > 12){
+      session = "PM";
+   }
+   hh = (hh < 10) ? "0" + hh : hh;
+   mm = (mm < 10) ? "0" + mm : mm;
+   ss = (ss < 10) ? "0" + ss : ss;
+   let time = hh + ":" + mm + ":" + ss + " " + session;
+  document.getElementById("clock").innerText = time; 
+  let t = setTimeout(function(){ currentTime() }, 1000); 
+}
+function showHome() {
+  var x = document.getElementById("zones");
+  x.style.display = "none";
+  x = document.getElementById("homee");
+  x.style.display = "block";
+}
+function showZone() {
+  var x = document.getElementById("zones");
+  x.style.display = "block";
+  x = document.getElementById("homee");
+  x.style.display = "none";
+}
+
+function onOpen(event) {
+	var x = document.getElementById("zones");
+	x.style.display = "none";
+	initButton();
+	try
+	{
+		if (myURL_param['name'] == 'zone') showZone();
+	}
+	catch(ex)
+	{
+		console.log('No URL Param');
+	}
+    console.log('Connection opened');
+	websocket.send("Get Zone Names");
+}
+function onMessage(event) {
+    const myArray = event.data.split(",");
+	if (myArray[0] == "Zone Names")
+		myArray.forEach(addZones);
+	if (myArray[0] == "Delete a Zone")
+		document.getElementById(myArray[1]).remove();
+	// document.getElementById(event.data).checked="checked";
+  }
+function addZones(item, index) {
+	if (index < 1) return;
+	var myDiv = document.getElementById("ezones");
+	let btn = document.createElement("button");
+	myDiv.appendChild(btn);
+	btn.innerHTML = item;
+	btn.id = item;
+	btn.classList.add('button2');
+	btn.onclick = function () {
+		window.location = "./myzone.html" + "?name=" + item; 
+		};
+}
+function initButton() {
+	document.getElementById('off').addEventListener('change', toggle);
+	document.getElementById('heat').addEventListener('change', toggle);
+	document.getElementById('cool').addEventListener('change', toggle);
+	document.getElementById('auto').addEventListener('change', toggle);
+	document.getElementById('on').addEventListener('change', toggle);
+}
+function toggle(){
+    websocket.send(this.id);
+}
+</script>
+<script type="text/javascript" src="script.js"></script>
 </body>
 </html>
