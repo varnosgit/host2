@@ -1,0 +1,164 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <title>HVAC Server</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" href="data:,">
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="stylesheet" type="text/css" href="style_manual.css">
+
+</head>
+
+<body>
+    <div class="topnav">
+        <h1>Change States</h1>
+    </div>
+
+    <div style="text-align: left; padding-left:50px; margin-bottom: 0; margin-top: 30px; font-size: 1.8rem;" id="clock" onload="currentTime()"></div>
+
+    <h3 style="text-align: left; padding-left:50px; font-size: 2.8rem; margin-top: 0">Manual Change</h3>
+
+
+
+
+
+    <table style="padding-top:1%; padding-left:25%;">
+        <tr style="padding-bottom:5rem;">
+            <th>
+                <div style="padding-bottom: 2rem;">
+                    <div class="onoffswitch">
+                        <input type="checkbox" onclick="toggleState(this)" name="onoffswitch1" class="onoffswitch-checkbox" id="Cool 1" tabindex="0" checked>
+                        <label class="onoffswitch-label" for="Cool 1">
+                            <span class="onoffswitch-inner"></span>
+                            <span class="onoffswitch-switch"></span>
+                        </label>
+                    </div>
+                </div>
+            </th>
+            <th>
+                <div style="padding-bottom: 2rem;">
+                    <span style="padding-left: 6rem;">Cool 1</span>
+                </div>
+            </th>
+        </tr>
+
+
+        <tr style="padding-bottom:5rem;">
+            <th>
+                <div style="padding-bottom: 2rem;">
+                    <div class="onoffswitch">
+                        <input type="checkbox" onclick="toggleState(this)" name="onoffswitch2" class="onoffswitch-checkbox" id="Cool 2" tabindex="0" checked>
+                        <label class="onoffswitch-label" for="Cool 2">
+                            <span class="onoffswitch-inner"></span>
+                            <span class="onoffswitch-switch"></span>
+                        </label>
+                    </div>
+                </div>
+            </th>
+            <th>
+                <div style="padding-bottom: 2rem;">
+                    <span style="padding-left: 6rem;">Cool 2</span>
+                </div>
+            </th>
+        </tr>
+
+
+
+        <tr style="padding-bottom:5rem;">
+            <th>
+                <div style="padding-bottom: 2rem;">
+                    <div class="onoffswitch">
+                        <input type="checkbox" onclick="toggleState(this)" name="onoffswitch3" class="onoffswitch-checkbox" id="Heat 1" tabindex="0" checked>
+                        <label class="onoffswitch-label" for="Heat 1">
+                            <span class="onoffswitch-inner"></span>
+                            <span class="onoffswitch-switch"></span>
+                        </label>
+                    </div>
+                </div>
+            </th>
+            <th>
+                <div style="padding-bottom: 2rem;">
+                    <span style="padding-left: 6rem;">Heat 1</span>
+                </div>
+            </th>
+        </tr>
+
+
+        <tr style="padding-bottom:5rem;">
+            <th>
+                <div style="padding-bottom: 2rem;">
+                    <div class="onoffswitch">
+                        <input type="checkbox" onclick="toggleState(this)" name="onoffswitch4" class="onoffswitch-checkbox" id="Heat 2" tabindex="0" checked>
+                        <label class="onoffswitch-label" for="Heat 2">
+                            <span class="onoffswitch-inner"></span>
+                            <span class="onoffswitch-switch"></span>
+                        </label>
+                    </div>
+                </div>
+            </th>
+            <th>
+                <div style="padding-bottom: 2rem;">
+                    <span style="padding-left: 6rem;">Heat 2</span>
+                </div>
+            </th>
+        </tr>
+
+
+
+        <tr style="padding-bottom:5rem;">
+            <th>
+                <div style="padding-bottom: 2rem;">
+                    <div class="onoffswitch">
+                        <input type="checkbox" onclick="toggleState(this)" name="onoffswitch5" class="onoffswitch-checkbox" id="Fan" tabindex="0" checked>
+                        <label class="onoffswitch-label" for="Fan">
+                            <span class="onoffswitch-inner2"></span>
+                            <span class="onoffswitch-switch"></span>
+                        </label>
+                    </div>
+                </div>
+            </th>
+            <th>
+                <div style="padding-bottom: 2rem;">
+                    <span style="padding-left: 6rem;">Fan</span>
+                </div>
+            </th>
+        </tr>
+    </table>
+
+    <div class="menut">
+        <a href="./index.html?name=zone"><button class="menut1">
+                <h2>Back</h2>
+            </button></a>
+
+        <a href="./index.html?name=zone">
+            <button id="save_change" class="menut1">
+                <h2>Save Changes</h2>
+            </button></a>
+    </div>
+
+    <script>
+        function onOpen(event) {
+            console.log('Connection opened');
+        }
+
+        function onMessage(event) {
+            console.log(event.data);
+            const myArray = event.data.split(",");
+            if (myArray[0] == "Change Manual to") {
+                if (myArray[2] == "true")
+                    document.getElementById(myArray[1]).checked = true;
+                else document.getElementById(myArray[1]).checked = false;
+            }
+
+        }
+
+        function toggleState(item) {
+            console.log('Change Manual222,' + item.id + item.checked);
+            websocket.send("Change Manual," + item.id + ',' + item.checked);
+        }
+    </script>
+    <script type="text/javascript" src="script.js"></script>
+</body>
+
+</html>

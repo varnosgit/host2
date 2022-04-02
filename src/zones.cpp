@@ -12,6 +12,9 @@ const uint8_t numOfMaxZones = 20;
 struct systemZone zones[numOfMaxZones];
 struct systemZone* zonesAddr = &zones[0];
 
+uint8_t FanState = 0;  // 0 = auto, 1 = On
+uint8_t ModeState = 0;  // 0 = off, 1 = Heat, 2 = Cool
+
 //////////////////////////////////// privet functions
 char* readFile(fs::FS &fs, const char *path)
 {

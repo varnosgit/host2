@@ -1,151 +1,169 @@
-<!DOCTYPE HTML><html>
+<!DOCTYPE HTML>
+<html>
+
 <head>
-  <title>HVAC Server</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="icon" href="data:,">
-  <link rel="stylesheet" type="text/css" href="style.css">
+    <title>HVAC Server</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" href="data:,">
+    <link rel="stylesheet" type="text/css" href="style.css">
 </head>
 
 <body>
-	<div class="topnav">
-		<h1>HVAC Server</h1>
-	</div>
+    <div class="topnav">
+        <h1>HVAC Server</h1>
+    </div>
 
-	<div>
-		<button   id="button_manu" class="button">Manual</button>
-		<h2 style="text-align: left; padding-left:1rem; margin-bottom: 0; margin-top: 30px;
-		 font-size: 1.8rem;" id = "clock" onload="currentTime()"></h2>
-		<h3 style="text-align: left; padding-left:1rem; font-size: 2.8rem; margin-top: 0">Home</h3>
-	</div>
+    <div>
+        <a href="./manual.html">
+            <button id="button_manu" class="button">
+                Manual
+            </button>
+        </a>
+        <h2 style="text-align: left; padding-left:1rem; margin-bottom: 0; margin-top: 30px;
+		 font-size: 1.8rem;" id="clock" onload="currentTime()"></h2>
+        <h3 style="text-align: left; padding-left:1rem; font-size: 2.8rem; margin-top: 0">Home</h3>
+    </div>
 
-	<div id="homee">
-		<div style="padding-bottom:30px;">
-			<label style="color:#333333; font-size: 1.2rem;">Fan:</label>
-			<label class="container">Auto
-			  <input id="auto" type="radio" checked="checked" name="radio1">
-			  <span class="checkmark"></span>
-			</label>
-			<label class="container">On
-			  <input id="on" type="radio" name="radio1">
-			  <span class="checkmark"></span>
-			</label>
-		</div>
+    <div id="homee">
+        <div style="padding-bottom:30px;">
+            <label style="color:#333333; font-size: 1.2rem;">Fan:</label>
+            <label class="container">Auto
+                <input id="auto" type="radio" checked="checked" name="radio1">
+                <span class="checkmark"></span>
+            </label>
+            <label class="container">On
+                <input id="on" type="radio" name="radio1">
+                <span class="checkmark"></span>
+            </label>
+        </div>
 
-		<div>
-			<label style="color:#333333; font-size: 1.2rem;">Mode:</label>
-			<label class="container">Off
-			  <input id="off" type="radio" checked="checked" name="radio">
-			  <span class="checkmark"></span>
-			</label>
-			<label class="container">Heat
-			  <input id="heat" type="radio" name="radio">
-			  <span class="checkmark"></span>
-			</label>
-			<label class="container">Cool
-			  <input id="cool" type="radio" name="radio">
-			  <span class="checkmark"></span>
-			</label>
-		</div>
-	</div>
-	
-	<div id="zones"><h2>
-		<div id="ezones">
-			<!--
+        <div>
+            <label style="color:#333333; font-size: 1.2rem;">Mode:</label>
+            <label class="container">Off
+                <input id="off" type="radio" checked="checked" name="radio">
+                <span class="checkmark"></span>
+            </label>
+            <label class="container">Heat
+                <input id="heat" type="radio" name="radio">
+                <span class="checkmark"></span>
+            </label>
+            <label class="container">Cool
+                <input id="cool" type="radio" name="radio">
+                <span class="checkmark"></span>
+            </label>
+        </div>
+    </div>
+    <div id="zones" style="display:none;">
+        <h2>
+            <div id="ezones">
+                <!--
 			<a href="./myzone.html"><button  id="z1" class="button2"><h2>Zone 1</h2></button></a>
 			<a href="./myzone.html"><button  id="z2" class="button2"><h2>Zone 2</h2></button></a>
 			!-->
-		</div>
-		<div>
-			<a href="./addzone.html"><button  class="button3">+ New</button></a>
-		</div>		
-	</h2></div>
+            </div>
+            <div>
+                <a href="./addzone.html"><button class="button3">+ New</button></a>
+            </div>
+        </h2>
+    </div>
 
-	<div style="padding: 4rem;">
-	</div>
-	<div class="menut">
-		<button onclick="showHome()" class="menut1"><h2>Main</h2></button>
-		<button onclick="showZone()" class="menut1"><h2>Zones</h2></button>
-	</div>
+    <div style="padding: 4rem;">
+    </div>
+    <div class="menut">
+        <button onclick="showHome()" class="menut1">
+            <h2>Main</h2>
+        </button>
+        <button onclick="showZone()" class="menut1">
+            <h2>Zones</h2>
+        </button>
+    </div>
 
-<script>
-currentTime();
+    <script>
+        currentTime();
 
-function currentTime() {
-  let date = new Date(); 
-  let hh = date.getHours();
-  let mm = date.getMinutes();
-  let ss = date.getSeconds();
-  let session = "AM";
-  
-  if(hh > 12){
-      session = "PM";
-   }
-   hh = (hh < 10) ? "0" + hh : hh;
-   mm = (mm < 10) ? "0" + mm : mm;
-   ss = (ss < 10) ? "0" + ss : ss;
-   let time = hh + ":" + mm + ":" + ss + " " + session;
-  document.getElementById("clock").innerText = time; 
-  let t = setTimeout(function(){ currentTime() }, 1000); 
-}
-function showHome() {
-  var x = document.getElementById("zones");
-  x.style.display = "none";
-  x = document.getElementById("homee");
-  x.style.display = "block";
-}
-function showZone() {
-  var x = document.getElementById("zones");
-  x.style.display = "block";
-  x = document.getElementById("homee");
-  x.style.display = "none";
-}
+        function currentTime() {
+            let date = new Date();
+            let hh = date.getHours();
+            let mm = date.getMinutes();
+            let ss = date.getSeconds();
+            let session = "AM";
 
-function onOpen(event) {
-	var x = document.getElementById("zones");
-	x.style.display = "none";
-	initButton();
-	try
-	{
-		if (myURL_param['name'] == 'zone') showZone();
-	}
-	catch(ex)
-	{
-		console.log('No URL Param');
-	}
-    console.log('Connection opened');
-	websocket.send("Get Zone Names");
-}
-function onMessage(event) {
-    const myArray = event.data.split(",");
-	if (myArray[0] == "Zone Names")
-		myArray.forEach(addZones);
-	if (myArray[0] == "Delete a Zone")
-		document.getElementById(myArray[1]).remove();
-	// document.getElementById(event.data).checked="checked";
-  }
-function addZones(item, index) {
-	if (index < 1) return;
-	var myDiv = document.getElementById("ezones");
-	let btn = document.createElement("button");
-	myDiv.appendChild(btn);
-	btn.innerHTML = item;
-	btn.id = item;
-	btn.classList.add('button2');
-	btn.onclick = function () {
-		window.location = "./myzone.html" + "?name=" + item; 
-		};
-}
-function initButton() {
-	document.getElementById('off').addEventListener('change', toggle);
-	document.getElementById('heat').addEventListener('change', toggle);
-	document.getElementById('cool').addEventListener('change', toggle);
-	document.getElementById('auto').addEventListener('change', toggle);
-	document.getElementById('on').addEventListener('change', toggle);
-}
-function toggle(){
-    websocket.send(this.id);
-}
-</script>
-<script type="text/javascript" src="script.js"></script>
+            if (hh > 12) {
+                session = "PM";
+            }
+            hh = (hh < 10) ? "0" + hh : hh;
+            mm = (mm < 10) ? "0" + mm : mm;
+            ss = (ss < 10) ? "0" + ss : ss;
+            let time = hh + ":" + mm + ":" + ss + " " + session;
+            document.getElementById("clock").innerText = time;
+            let t = setTimeout(function() {
+                currentTime()
+            }, 1000);
+        }
+
+        function showHome() {
+            var x = document.getElementById("zones");
+            x.style.display = "none";
+            x = document.getElementById("homee");
+            x.style.display = "block";
+        }
+
+        function showZone() {
+            var x = document.getElementById("zones");
+            x.style.display = "block";
+            x = document.getElementById("homee");
+            x.style.display = "none";
+        }
+
+        function onOpen(event) {
+            var x = document.getElementById("zones");
+            x.style.display = "none";
+            initButton();
+            try {
+                if (myURL_param['name'] == 'zone') showZone();
+            } catch (ex) {
+                console.log('No URL Param');
+            }
+            console.log('Connection opened');
+            websocket.send("Get Zone Names");
+        }
+
+        function onMessage(event) {
+            const myArray = event.data.split(",");
+            if (myArray[0] == "Zone Names")
+                myArray.forEach(addZones);
+            if (myArray[0] == "Delete a Zone")
+                document.getElementById(myArray[1]).remove();
+            if (myArray[0] == "Change State to")
+                document.getElementById(myArray[1]).checked = "checked";
+        }
+
+        function addZones(item, index) {
+            if (index < 1) return;
+            var myDiv = document.getElementById("ezones");
+            let btn = document.createElement("button");
+            myDiv.appendChild(btn);
+            btn.innerHTML = item;
+            btn.id = item;
+            btn.classList.add('button2');
+            btn.onclick = function() {
+                window.location = "./myzone.html" + "?name=" + item;
+            };
+        }
+
+        function initButton() {
+            document.getElementById('off').addEventListener('change', toggle);
+            document.getElementById('heat').addEventListener('change', toggle);
+            document.getElementById('cool').addEventListener('change', toggle);
+            document.getElementById('auto').addEventListener('change', toggle);
+            document.getElementById('on').addEventListener('change', toggle);
+        }
+
+        function toggle() {
+            websocket.send("Change State," + this.id);
+        }
+    </script>
+    <script type="text/javascript" src="script.js"></script>
 </body>
+
 </html>

@@ -6,6 +6,9 @@ extern uint8_t pair_request_flag;
 extern uint8_t globalZoneID, globalDeviceID;
 extern const uint8_t numOfMaxZones;
 extern systemZone zones[];;
+extern uint8_t FanState;  // 0 = auto, 1 = On
+extern uint8_t ModeState;  // 0 = off, 1 = Heat, 2 = Cool
+ 
 hc_message hc_mesg;
 extern uint8_t hc_sendFlag, hc_recvFlag;
 extern IPAddress localIp;
@@ -188,6 +191,15 @@ void handle_browser_message(char *data, size_t len, uint32_t client_id)
     if (strs[0] == "Get Zone Names")
     {
         notify_a_client_txt(get_zone_names(), client_id);
+
+        String FanS, ModeS;
+        if (FanState == 0) FanS = "auto";
+        if (FanState == 1) FanS = "on";
+        if (ModeState == 0) ModeS = "off";
+        if (ModeState == 1) ModeS = "heat";
+        if (ModeState == 2) ModeS = "cool";
+        notify_a_client_txt("Change State to," + FanS, client_id);
+        notify_a_client_txt("Change State to," + ModeS, client_id);
     }
     if (strs[0] == "Add New Zone")
     {
@@ -260,5 +272,29 @@ void handle_browser_message(char *data, size_t len, uint32_t client_id)
         Serial.println("send data to change setpoint");
         print_hcMessage(hc_mesg);
         hc_sendFlag = 1;
+    }
+    if (strs[0] == "Change State")
+    {
+        Serial.print("change state to ");Serial.println(strs[1]);
+        if (strs[1] == "auto") FanState = 0;
+        if (strs[1] == "on") FanState = 1;
+        if (strs[1] == "off") ModeState = 0;
+        if (strs[1] == "heat")  ModeState = 1;
+        if (strs[1] == "cool") ModeState = 2;
+        Serial.println(ModeState);
+        notifyClients_txt("Change State to," + strs[1]);
+    }
+
+    if (strs[0] == "Change Manual")
+    {
+        Serial.print("change manual of "); Serial.print(strs[1]); Serial.print(" to "); Serial.println(strs[2]);
+        // if (strs[1] == "auto") FanState = 0;
+        // if (strs[1] == "on") FanState = 1;
+        // if (strs[1] == "off") ModeState = 0;
+        // if (strs[1] == "heat")  ModeState = 1;
+        // if (strs[1] == "cool") ModeState = 2;
+        // Serial.println(ModeState);
+        notifyClients_txt("Change Manual to," + strs[1] + "," + strs[2]);
+        Serial.println("Notify clients: Change Manual to," + strs[1] + "," + strs[2]);
     }
 }

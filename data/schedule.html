@@ -1,0 +1,131 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <title>HVAC Server</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" href="data:,">
+    <link rel="stylesheet" type="text/css" href="style.css">
+
+</head>
+
+<body>
+    <div class="topnav">
+        <h1>Create New Zone</h1>
+    </div>
+
+
+    <h3 style="text-align: left; padding-left:40px; font-size: 2.8rem; margin-top:0">Home </h3>
+
+
+    <h3 class="text-center">Set Point(C)</h3>
+    <div class="input-group input-number-group" style="padding-bottom: 1rem;">
+        <div class="input-group-button">
+            <button id="dec_setpoint" style="padding:15px; margin:10px; font-weight: 900; font-size: 1.5rem;"> -
+            </button>
+        </div>
+        <input id="setp_val" class="input-number" type="number" value="25" min="15" max="35" style="margin-top: 1.5rem; font-size: 1.5rem;">
+        <div class="input-group-button">
+            <button id="inc_setpoint" style="padding:15px; margin:10px; font-weight: 900; font-size: 1.5rem;"> +
+            </button>
+        </div>
+    </div>
+
+    <!-- <form> -->
+    <label for="days" style="font-size: 2rem;">Day:</label>
+    <select id="days" style="font-size: 1.5rem;">
+        <option value="Sunday">Sunday</option>
+        <option value="Monday">Monday</option>
+        <option value="Tuesday">Tuesday</option>
+        <option value="Wednesday">Wednesday</option>
+        <option value="Thursday">Thursday</option>
+        <option value="Friday">Friday</option>
+        <option value="Saturday">Saturday</option>
+    </select>
+    <label for="times" style="font-size: 2rem;">Time:</label>
+    <input id="times" type="time" value="16:32" style="font-size: 1.5rem;">
+
+    <!-- </form> -->
+
+    <div id="list_setp" style="padding: 2rem;">
+
+    </div>
+
+
+    <div class="menut">
+        <button id="backb" class="menut1">
+            <h2>Back</h2>
+        </button>
+        <button id="exec_setpoint" class="menut1">
+            <h2>Execute Setpoint</h2>
+        </button>
+    </div>
+
+
+    <script>
+        document.getElementById('exec_setpoint').addEventListener('click', add_new_setpoint);
+        document.getElementById('backb').addEventListener('click', back_to_device);
+        document.getElementById('inc_setpoint').addEventListener('click', f_inc_setpoint);
+        document.getElementById('dec_setpoint').addEventListener('click', f_dec_setpoint);
+
+        function f_inc_setpoint() {
+            document.getElementById('setp_val').value = parseInt(document.getElementById('setp_val').value) + 1;
+        }
+
+        function f_dec_setpoint() {
+            document.getElementById('setp_val').value = parseInt(document.getElementById('setp_val').value) - 1;
+        }
+
+        function add_new_setpoint() {
+            var tag = document.createElement("span");
+            tag.classList.add("setpoints_tag");
+            var element = document.getElementById("list_setp");
+            element.appendChild(tag);
+            tag.innerHTML = document.getElementById('days').value + "   " +
+                document.getElementById('times').value + "   --->   " +
+                document.getElementById('setp_val').value + "C    ";
+
+            var tagb = document.createElement("button");
+            tagb.classList.add("setpoints_tag");
+            var element = document.getElementById("list_setp");
+            element.appendChild(tagb);
+            tagb.innerHTML = "Remove";
+
+            var tagp = document.createElement("p");
+            tagp.classList.add("setpoints_tag");
+            var element = document.getElementById("list_setp");
+            element.appendChild(tagp);
+        }
+
+        function back_to_device() {
+            document.getElementById('setp_val').value = parseInt(document.getElementById('setp_val').value) - 1;
+        }
+
+
+        function onOpen(event) {
+            console.log('Connection opened');
+            initButton();
+        }
+
+        function onMessage(event) {
+            //let text = event.data;
+            const myArray = event.data.split(",");
+            if (myArray[0] == "Zone Names")
+                myArray.forEach(addZones);
+        }
+
+        function initButton() {
+
+        }
+
+        function addZone_command() {
+            var xname = document.getElementById("fname").value;
+            var xlogo = document.getElementById("flogo").value;
+            websocket.send("Add New Zone," + xname + "," + xlogo);
+            window.location = "./index.html?name=zone";
+        }
+    </script>
+    <script type="text/javascript" src="script.js"></script>
+</body>
+
+</html>

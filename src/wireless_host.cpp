@@ -73,12 +73,20 @@ void setup_webpages(void)
     request->send(SPIFFS, "/device.html", String(), false, processor);
   });
           // Route for root / web page
-  server.on("/vent.html", HTTP_GET, [](AsyncWebServerRequest *request){
-    request->send(SPIFFS, "/vent.html", String(), false, processor);
+  server.on("/manual.html", HTTP_GET, [](AsyncWebServerRequest *request){
+    request->send(SPIFFS, "/manual.html", String(), false, processor);
   });
-          // Route for root / web page
-  server.on("/termo.html", HTTP_GET, [](AsyncWebServerRequest *request){
-    request->send(SPIFFS, "/termo.html", String(), false, processor);
+            // Route for root / web page
+  server.on("/schedule.html", HTTP_GET, [](AsyncWebServerRequest *request){
+    request->send(SPIFFS, "/schedule.html", String(), false, processor);
+  });
+      // Route to load style.css file
+  server.on("/style_manual.css", HTTP_GET, [](AsyncWebServerRequest *request){
+    request->send(SPIFFS, "/style_manual.css", "text/css");
+  });
+  // Route to load style.css file
+  server.on("/loading.gif", HTTP_GET, [](AsyncWebServerRequest *request){
+    request->send(SPIFFS, "/loading.gif", ".gif");
   });
   server.begin();
 }

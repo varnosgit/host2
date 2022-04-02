@@ -1,68 +1,157 @@
-<!DOCTYPE HTML><html>
+<!DOCTYPE HTML>
+<html>
+
 <head>
-  <title>HVAC Server</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="icon" href="data:,">
-  <link rel="stylesheet" type="text/css" href="style.css">
+    <title>HVAC Server</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" href="data:,">
+    <link rel="stylesheet" type="text/css" href="style.css">
 
 </head>
+
 <body>
-  <div class="topnav">
-    <h1 id="ZM">Termostat</h1>
-  </div>
+    <div class="topnav">
+        <h1 id="ZM">Termostat</h1>
+    </div>
+    <h3 id="ZN" style="text-align: left; padding-left:50px; font-size: 2.8rem; margin-top: 0">Home</h3>
+    <!-- <div style="padding:10px;">
+
+        <span style="padding:30px; font-size:1.5rem;">Set Point:</span>
+        <input type="text" id="aasetp_val" name="setpoint" value="25"><br>
+        <button id="change_setpoint" style="padding:15px; margin:10px;"> Change Setpointt </button>
+    </div> -->
 
 
-<h3 id="ZN" style="text-align: left; padding-left:50px; font-size: 2.8rem; margin-top: 0">Home</h3>
-	<div style="padding:10px;">
-		<span style="padding:30px; font-size:1.5rem;">Set Point:</span>
-		<input type="text" id="setp_val" name="setpoint" value="25"><br>
-		<button id="change_setpoint" style="padding:15px; margin:10px;" > Change Setpointt </button>
-	</div>
-	<div>
-		<span style="padding:30px; font-size:1.5rem;">Temperature:</span>
-		<span id="tempo_val">27</span>
-	</div>
-	<div style="padding:30px;">
-		<span style="padding:30px; font-size:1.5rem;">Battery Level:</span>
-		<span id="bat_val">100%</span>
-	</div>
-	
-	<button id="remove_device" style="padding:15px; margin:20px;"><h2>Remove Device</h2></button>
-		<div>
-	<a href="./index.html"><button style="padding:30px; margin:30px;"><h2>Schedule</h2></button></a>
-	</div>
 
-<script>
-function onOpen(event) {
-    console.log('Connection opened');
-	websocket.send("Get Device now Status," + myURL_param['zonename'] + "," + myURL_param['devname']);
-	
-	document.getElementById('ZM').innerHTML = myURL_param['zonename'];
-	document.getElementById('ZN').innerHTML = myURL_param['devname'];
-	
-	document.getElementById('remove_device').addEventListener('click', remove_device);
-	document.getElementById('change_setpoint').addEventListener('click', change_setpoint);
-}
-function onMessage(event) {
-	const myArray = event.data.split(",");
-	if (myArray[0]=="Device Status" && myArray[1]==myURL_param['zonename'] && myArray[2]==myURL_param['devname'])
-	{
-		document.getElementById('bat_val').innerHTML = myArray[3];
-		document.getElementById('setp_val').value = myArray[4];
-		document.getElementById('tempo_val').innerHTML = myArray[5];
-	}
-} 
-function change_setpoint(){
-	  var xname = document.getElementById("ZN").innerHTML;
-	   websocket.send("Change Setpoint,"+ myURL_param['zonename'] + "," + myURL_param['devname'] + "," 
-								+ document.getElementById('setp_val').value);
-} 
-function remove_device(){
-	  var xname = document.getElementById("ZN").innerHTML;
-	   websocket.send("Remove Device,"+ myURL_param['zonename'] + "," + myURL_param['devname']);
-	   window.location = "./myzone.html" + "?name=" + myURL_param['zonename']; 
-}
-</script>
-<script type="text/javascript" src="script.js"></script>
+
+
+
+
+
+    <h3 class="text-center">Set Point(C)</h3>
+    <div class="input-group input-number-group" style="padding-bottom: 1rem;">
+        <div class="input-group-button">
+            <button id="dec_setpoint" style="padding:15px; margin:10px; font-weight: 900; font-size: 1.5rem;"> -
+            </button>
+            <!-- <span id="dec_setpoint" class="input-number-decrement">-</span> -->
+        </div>
+        <input id="setp_val" class="input-number" type="number" value="" min="15" max="35" style="margin-top: 1.5rem; font-size: 1.5rem;">
+        <div class="input-group-button">
+            <!-- <span id="inc_setpoint" class="input-number-increment">+</span> -->
+            <button id="inc_setpoint" style="padding:15px; margin:10px; font-weight: 900; font-size: 1.5rem;"> +
+            </button>
+        </div>
+    </div>
+
+
+
+
+
+
+
+
+    <div>
+        <span style="padding:30px; font-size:1.1rem;">Temperature:</span>
+        <span id="tempo_val" style="font-size: 1.5rem; font-weight: 900;"></span>
+    </div>
+    <div style="padding:30px; padding-bottom: 2rem;">
+        <span style="padding:30px; font-size:1.1rem;">Battery Level:</span>
+        <span id="bat_val" style="font-size: 1.1rem; font-weight: 700;"></span>
+    </div>
+
+    <!-- <button id="remove_device" style="padding:15px; margin:20px;">
+		<h2>Remove Device</h2>
+	</button>
+    <div>
+        <a href="./index.html"><button style="padding:30px; margin:30px;">
+				<h2>Schedule</h2>
+			</button></a>
+    </div> -->
+
+    <div class="menut">
+        <button id="backtozone" class="menut1">
+            <h2>Back</h2>
+        </button>
+        <button id="goSch" class="menut1">
+            <h2>Schedule</h2>
+        </button>
+    </div>
+
+
+    <div>
+        <a href="./index.html?name=zone"><button style="margin-bottom: 1rem;" id="remove_device" class="button3">Remove
+                Device</button></a>
+    </div>
+
+
+    <script>
+        document.getElementById('inc_setpoint').addEventListener('click', f_inc_setpoint);
+        document.getElementById('dec_setpoint').addEventListener('click', f_dec_setpoint);
+        document.getElementById('backtozone').addEventListener('click', back_to_zone);
+        document.getElementById('goSch').addEventListener('click', go_to_schedule);
+
+        function go_to_schedule() {
+            window.location = "./schedule.html" + "?zonename=" + myURL_param['zonename'] + "&devname=" + myURL_param['devname'];
+        }
+
+        function onOpen(event) {
+            console.log('Connection opened');
+            websocket.send("Get Device now Status," + myURL_param['zonename'] + "," + myURL_param['devname']);
+
+            document.getElementById('ZM').innerHTML = myURL_param['zonename'];
+            document.getElementById('ZN').innerHTML = myURL_param['devname'];
+
+
+
+            document.getElementById('remove_device').addEventListener('click', remove_device);
+
+
+            // document.getElementById('change_setpoint').addEventListener('click', change_setpoint);
+
+
+        }
+
+        function onMessage(event) {
+            const myArray = event.data.split(",");
+            if (myArray[0] == "Device Status" && myArray[1] == myURL_param['zonename'] && myArray[2] == myURL_param['devname']) {
+                document.getElementById('bat_val').innerHTML = myArray[3];
+                document.getElementById('setp_val').value = myArray[4];
+                document.getElementById('tempo_val').innerHTML = myArray[5];
+            }
+        }
+
+        // function change_setpoint() {
+        //     var xname = document.getElementById("ZN").innerHTML;
+        //     websocket.send("Change Setpoint," + myURL_param['zonename'] + "," + myURL_param['devname'] + "," +
+        //         document.getElementById('setp_val').value);
+        // }
+
+        function f_inc_setpoint() {
+            document.getElementById('setp_val').value = parseInt(document.getElementById('setp_val').value) + 1;
+            websocket.send("Change Setpoint," + myURL_param['zonename'] + "," + myURL_param['devname'] + "," +
+                document.getElementById('setp_val').value);
+        }
+
+        function f_dec_setpoint() {
+            document.getElementById('setp_val').value = parseInt(document.getElementById('setp_val').value) - 1;
+            websocket.send("Change Setpoint," + myURL_param['zonename'] + "," + myURL_param['devname'] + "," +
+                document.getElementById('setp_val').value);
+        }
+
+        function remove_device() {
+            var xname = document.getElementById("ZN").innerHTML;
+            websocket.send("Remove Device," + myURL_param['zonename'] + "," + myURL_param['devname']);
+            window.location = "./myzone.html" + "?name=" + myURL_param['zonename'];
+        }
+
+        function back_to_zone() {
+            window.location = "./myzone.html" + "?name=" + myURL_param['zonename'];
+        }
+
+
+        //////////////////////////////////////////////////
+    </script>
+    <script type="text/javascript" src="script.js"></script>
 </body>
+
 </html>

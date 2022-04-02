@@ -1,106 +1,115 @@
-<!DOCTYPE HTML><html>
+<!DOCTYPE HTML>
+<html>
+
 <head>
-  <title>HVAC Server</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="icon" href="data:,">
-  <link rel="stylesheet" type="text/css" href="style.css">
+    <title>HVAC Server</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" href="data:,">
+    <link rel="stylesheet" type="text/css" href="style.css">
 
 </head>
+
 <body>
-  <div class="topnav">
-    <h1>My Zone</h1>
-  </div>
+    <div class="topnav">
+        <h1>My Zone</h1>
+    </div>
 
-<div style="text-align: left; padding-left:50px; margin-bottom: 0; margin-top: 30px; font-size: 1.8rem;" id = "clock" onload="currentTime()"></div>
+    <div style="text-align: left; padding-left:50px; margin-bottom: 0; margin-top: 30px; font-size: 1.8rem;" id="clock" onload="currentTime()"></div>
 
-<h3 id="ZN"; style="text-align: left; padding-left:50px; font-size: 2.8rem; margin-top: 0">Zone Name?</h3>
+    <h3 id="ZN" ; style="text-align: left; padding-left:50px; font-size: 2.8rem; margin-top: 0"></h3>
 
-<div id="edevs">
-	<!--
-	<a href="./vent.html"><button style="padding:30px; margin:30px;"><h2>Device 1 - Vent</h2></button></a>
-	<a href="./termo.html"><button style="padding:30px; margin:30px;"><h2>Device 2 - Termostat</h2></button></a>
-	!-->
-</div>	
+    <div id="edevs">
+    </div>
 
-<div>
-	<a href="./index.html?name=zone">
+    <div class="menut">
+        <a href="./index.html?name=zone"><button class="menut1">
+                <h2>Back</h2>
+            </button></a>
+        <button id="delZ" class="menut1">
+            <h2>Delete Zone</h2>
+        </button>
+    </div>
+    <div>
+
+        <div>
+            <button id="add_dev" class="button3">+ Pair New Device</button>
+        </div>
+        <!-- <a href="./index.html?name=zone">
 	<button id="delZ" style="padding:30px; margin:30px;"><h2>Delete Zone</h2></button>
 	</a>
-	<button id="add_dev" style="padding:30px; margin:30px;"><h2>Add Device</h2></button>
-	<p id="add_mesg"></p>
-	<img id="loadgif" src="loading.gif" alt="loading ..." style="width:48px;height:48px;">
-</div>	
+	<button id="add_dev" style="padding:30px; margin:30px;"><h2>Add Device</h2></button> -->
+        <h2 id="add_mesg"></h2>
+        <img id="loadgif" src="loading.gif" alt="loading ..." style="width:48px;height:48px;visibility:hidden;">
+    </div>
 
-<script>	
+    <script>
+        document.getElementById('delZ').addEventListener('click', deleteZone_command);
+        document.getElementById('add_dev').addEventListener('click', addDev_command);
 
-  document.getElementById('delZ').addEventListener('click', deleteZone_command);
-  document.getElementById('add_dev').addEventListener('click', addDev_command);
-  
-function onOpen(event) {
-    console.log('Connection opened');
+        function onOpen(event) {
+            console.log('Connection opened');
 
-	document.getElementById('ZN').innerHTML = myURL_param['name'];
-	document.getElementById("loadgif").style.visibility = "hidden";
-	
-	websocket.send("Zone Device Names," + document.getElementById('ZN').innerHTML);
-}
-function onMessage(event) {
-	const myArray = event.data.split(",");
-	if (myArray[0] == "Add Device" && myArray[1]==myURL_param['name'])
-	{
-		document.getElementById('add_mesg').innerHTML = "";
-		document.getElementById("loadgif").style.visibility = "hidden";
-		
-		var myDiv = document.getElementById("edevs");
-		let btn = document.createElement("button");
-		myDiv.appendChild(btn);
-		btn.innerHTML = myArray[2];
-		btn.id = myArray[2];
-		btn.classList.add('button2');
-		btn.onclick = function () 
-		{
-			window.location = "./device.html" + "?zonename=" +
-										document.getElementById('ZN').innerHTML
-										+ "&devname=" + myArray[2]; 
-		};
-	}
-	if (myArray[0] == "Device Names" && myArray[1]==myURL_param['name'])
-	{
-		myArray.forEach(add_device_bottom);
-	}
-	if (myArray[0]=="Delete a Device" && myArray[1]==myURL_param['name'] )
-	{
-		console.log('Delete a device');
-		document.getElementById(myArray[2]).remove();
-	}
-}
-  
-function add_device_bottom(item, index){
-		if (index < 2) return;
-	    var myDiv = document.getElementById("edevs");
-		let btn = document.createElement("button");
-		myDiv.appendChild(btn);
-		btn.innerHTML = item;
-		btn.id = item;
-		btn.classList.add('button2');
-		btn.onclick = function () 
-		{
-			window.location = "./device.html" + "?zonename=" +
-										document.getElementById('ZN').innerHTML
-										+ "&devname=" + item; 
-		};
-  }
- 
-function deleteZone_command(){
-	  var xname = document.getElementById("ZN").innerHTML;
-	   websocket.send("Delete Zone," + xname);
-  }
-function addDev_command(){
-	  document.getElementById('add_mesg').innerHTML = "please 3 sec.";
-	  document.getElementById("loadgif").style.visibility = "visible";
-	   websocket.send("Search Device," + document.getElementById('ZN').innerHTML);
-  }	
-</script>
-<script type="text/javascript" src="script.js"></script>
+            document.getElementById('ZN').innerHTML = myURL_param['name'];
+            document.getElementById("loadgif").style.visibility = "hidden";
+
+            websocket.send("Zone Device Names," + document.getElementById('ZN').innerHTML);
+        }
+
+        function onMessage(event) {
+            const myArray = event.data.split(",");
+            if (myArray[0] == "Add Device" && myArray[1] == myURL_param['name']) {
+                document.getElementById('add_mesg').innerHTML = "";
+                document.getElementById("loadgif").style.visibility = "hidden";
+
+                var myDiv = document.getElementById("edevs");
+                let btn = document.createElement("button");
+                myDiv.appendChild(btn);
+                btn.innerHTML = myArray[2];
+                btn.id = myArray[2];
+                btn.classList.add('button2');
+                btn.onclick = function() {
+                    window.location = "./device.html" + "?zonename=" +
+                        document.getElementById('ZN').innerHTML +
+                        "&devname=" + myArray[2];
+                };
+            }
+            if (myArray[0] == "Device Names" && myArray[1] == myURL_param['name']) {
+                myArray.forEach(add_device_bottom);
+            }
+            if (myArray[0] == "Delete a Device" && myArray[1] == myURL_param['name']) {
+                console.log('Delete a device');
+                document.getElementById(myArray[2]).remove();
+            }
+        }
+
+        function add_device_bottom(item, index) {
+            if (index < 2) return;
+            var myDiv = document.getElementById("edevs");
+            let btn = document.createElement("button");
+            myDiv.appendChild(btn);
+            btn.innerHTML = item;
+            btn.id = item;
+            btn.classList.add('button2');
+            btn.onclick = function() {
+                window.location = "./device.html" + "?zonename=" +
+                    document.getElementById('ZN').innerHTML +
+                    "&devname=" + item;
+            };
+        }
+
+        function deleteZone_command() {
+            var xname = document.getElementById("ZN").innerHTML;
+            websocket.send("Delete Zone," + xname);
+            window.location = "./index.html?name=zone";
+        }
+
+        function addDev_command() {
+            document.getElementById('add_mesg').innerHTML = 'Please hold "Learn" button of the device for 3 seconds :)';
+            document.getElementById("loadgif").style.visibility = "visible";
+            websocket.send("Search Device," + document.getElementById('ZN').innerHTML);
+        }
+    </script>
+    <script type="text/javascript" src="script.js"></script>
 </body>
+
 </html>
