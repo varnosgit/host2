@@ -24,14 +24,6 @@ void send_data_to_controller(void)
     hc_mesg.begin_validator[2] = 'C';
     hc_mesg.end_validator = 'H';
     Serial2.write((const uint8_t *)&hc_mesg, sizeof(hc_mesg));  
-    // if (hc_mesg.__hcdata > 2) // send data to a device or pair
-    // {
-    //     uint8_t data_ack[2] = {'N', 'O'};
-    //     delay(100);
-    //     Serial2.read(data_ack, sizeof(data_ack));
-    //     if (data_ack[0]=='O' and data_ack[1]=='K') Serial.println("Host to device Delivery Success");
-    //     else Serial.println("Host to device Delivery Fail!");
-    // }
     hc_sendFlag = 0;
 }
 
@@ -66,6 +58,7 @@ void print_hcMessage(hc_message DD)
     Serial.print("    * setPoint_temp: "); Serial.println(DD.setPoint_temp);
     Serial.print("    * ventStatus: ");    Serial.println(DD.ventStatus);
 }
+
 void handle_controller_message(void) 
 {
     hc_recvFlag = 0;
@@ -162,8 +155,7 @@ void handle_controller_message(void)
     }
 }
 
-
-////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////
 void handle_browser_message(char *data, size_t len, uint32_t client_id)
 {
     Serial.print("data from browser: ");Serial.printf((char *)data);Serial.println("");
