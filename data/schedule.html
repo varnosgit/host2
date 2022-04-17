@@ -63,6 +63,8 @@
 
 
     <script>
+		
+		var sc_id = 0;
         document.getElementById('exec_setpoint').addEventListener('click', add_new_setpoint);
         document.getElementById('backb').addEventListener('click', back_to_device);
         document.getElementById('inc_setpoint').addEventListener('click', f_inc_setpoint);
@@ -77,26 +79,39 @@
         }
 
         function add_new_setpoint() {
+			
+			sc_id = sc_id + 1;
+			
+			var tagDIv = document.createElement("div");
+			tagDIv.id = "schDiv_remove" + sc_id.toString();
+			
+			var element = document.getElementById("list_setp");
+            element.appendChild(tagDIv);
+			
             var tag = document.createElement("span");
             tag.classList.add("setpoints_tag");
-            var element = document.getElementById("list_setp");
-            element.appendChild(tag);
+            tagDIv.appendChild(tag);
             tag.innerHTML = document.getElementById('days').value + "   " +
                 document.getElementById('times').value + "   --->   " +
                 document.getElementById('setp_val').value + "C    ";
 
             var tagb = document.createElement("button");
             tagb.classList.add("setpoints_tag");
-            var element = document.getElementById("list_setp");
-            element.appendChild(tagb);
+            tagDIv.appendChild(tagb);
             tagb.innerHTML = "Remove";
+			tagb.id = "remove" + sc_id.toString();
+			tagb.onclick = function() {remove_schedule(tagb)};
 
             var tagp = document.createElement("p");
             tagp.classList.add("setpoints_tag");
-            var element = document.getElementById("list_setp");
-            element.appendChild(tagp);
+            tagDIv.appendChild(tagp);
         }
-
+		
+		function remove_schedule(tagbb) {
+			var div_toremove = document.getElementById("schDiv_" + tagbb.id);		
+			div_toremove.remove();
+        }
+		
         function back_to_device() {
             document.getElementById('setp_val').value = parseInt(document.getElementById('setp_val').value) - 1;
         }
@@ -125,7 +140,7 @@
             window.location = "./index.html?name=zone";
         }
     </script>
-    <script type="text/javascript" src="script.js"></script>
+    <!--<script type="text/javascript" src="script.js"></script> !-->
 </body>
 
 </html>

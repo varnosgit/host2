@@ -14,16 +14,18 @@ typedef struct hc_message {
   uint8_t fanStatus;
   uint8_t setPoint_temp;
   uint8_t ventStatus;
+  uint32_t zone_id_group;
+  uint8_t dev_number;
   uint8_t reserved;
   uint8_t __hcdata; // 0 = do nothing
                     // 1 = cont.: introduce controller to host (reciver macAdd = controller MAC Add)
                     // 2 = host.: introduce host to controller (reciver macAdd = host IP)
                     // 3 = cont.: this is a message from a device (sender mac address)
-                           // host : send this message directly to device (reciver mac addr) 
+                        // host : send this message directly to device (reciver mac addr) 
                     // 4 = host: pair a device with sender MAC Add
                     // 5 = host: unpair this device with reciever MAC Add if any
                     // 6 = cont.: delivery to device failed
-                    // 7 = 
+                    // 7 = host: brodcast this message to all devices
   uint8_t end_validator;
 } hc_message;
 

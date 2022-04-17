@@ -94,9 +94,11 @@ void handle_controller_message(void)
                         dev_name = add_device_to_zone(globalZoneID, hc_mesg._sender , hc_mesg.sender_MAC_addr);
                         if (dev_name != "no name")
                         {
-                            // notify controller and device
+                            // notify controller and the device that it is being added
                             hc_mesg.__hcdata = 4; // 4 = host: pair a device with sender MAC Add
+                            hc_mesg.zone_id_group = 1 << globalZoneID;
                             Serial.println("Device added successfully, command controller to pair device and acknowlodge it.");
+                            Serial.print("Zone ID = "); Serial.println(hc_mesg.zone_id_group);
                             hc_sendFlag = 1;
                             // notify browsers
                             String newDev = "Add Device," + String(zones[globalZoneID].name) + "," + dev_name; 
@@ -108,18 +110,26 @@ void handle_controller_message(void)
             }
             if (hc_mesg._command == 0x02) // execute an order
             {
-                zones[globalZoneID].termos[globalDeviceID].batteryState = hc_mesg.batStat;
-                zones[globalZoneID].termos[globalDeviceID].setPoint = hc_mesg.setPoint_temp;
-                zones[globalZoneID].termos[globalDeviceID].temperature = hc_mesg.temprature;
+                if (hc_mesg._sender == 0x02) // termostat
+                {
+                    uint32_t zone_id_local = 0;
+                    while (zone_id_local > 0) 
+                    {
+                        hc_mesg.zone_id_group >> 1;
+                        zone_id_local += 1;
+                    }
+                    zones[globalZoneID].termos[globalDeviceID].batteryState = hc_mesg.batStat;
+                    zones[globalZoneID].termos[globalDeviceID].setPoint = hc_mesg.setPoint_temp;
+                    zones[globalZoneID].termos[globalDeviceID].temperature = hc_mesg.temprature;
 
-                String devices_stat = "Device Status," + String(zones[globalZoneID].name) + ","
-                                    + String(zones[globalZoneID].termos[globalDeviceID].name) + "," 
-                                    + String(hc_mesg.batStat) + ","
-                                    + String(hc_mesg.setPoint_temp) + ","
-                                    + String(hc_mesg.temprature);
-                Serial.println(devices_stat);
-                notifyClients_txt(devices_stat);
-
+                    String devices_stat = "Device Status," + String(zones[globalZoneID].name) + ","
+                                        + String(zones[globalZoneID].termos[globalDeviceID].name) + "," 
+                                        + String(hc_mesg.batStat) + ","
+                                        + String(hc_mesg.setPoint_temp) + ","
+                                        + String(hc_mesg.temprature);
+                    Serial.println(devices_stat);
+                    notifyClients_txt(devices_stat);
+                }
             }
             if (hc_mesg._command == 0x03) // read status
             {
@@ -180,6 +190,7 @@ void handle_browser_message(char *data, size_t len, uint32_t client_id)
     // print data from web to serial
     for (int i = 0; i < StringCount; i++) {
         Serial.print(i);  Serial.print(": \"");    Serial.print(strs[i]);    Serial.println("\"");  }
+
     if (strs[0] == "Get Zone Names")
     {
         notify_a_client_txt(get_zone_names(), client_id);
@@ -254,9 +265,12 @@ void handle_browser_message(char *data, size_t len, uint32_t client_id)
         globalZoneID = get_zoneID_by_name(strs[1]);
         globalDeviceID = get_DeviceID_by_name(globalZoneID, strs[2]);
         hc_mesg.__hcdata = 0x03; // host : send this message directly to device (reciver mac addr) 
-        hc_mesg._sender = 0x01;
-        hc_mesg._command = 0x02;
+        hc_mesg._sender = 0x01; //controller
+        hc_mesg._command = 0x02; // execute order
         hc_mesg.setPoint_temp = strs[3].toInt();
+
+        zones[globalZoneID].termos[globalDeviceID].setPoint = hc_mesg.setPoint_temp;
+
         for (int i=0; i<6; i++){
             hc_mesg.reciever_MAC_addr[i] = zones[globalZoneID].termos[globalDeviceID].MAC_addr[i];
             hc_mesg.sender_MAC_addr[i] = controller_MAC[i];
@@ -286,6 +300,8 @@ void handle_browser_message(char *data, size_t len, uint32_t client_id)
         // if (strs[1] == "heat")  ModeState = 1;
         // if (strs[1] == "cool") ModeState = 2;
         // Serial.println(ModeState);
+
+        
         notifyClients_txt("Change Manual to," + strs[1] + "," + strs[2]);
         Serial.println("Notify clients: Change Manual to," + strs[1] + "," + strs[2]);
     }
